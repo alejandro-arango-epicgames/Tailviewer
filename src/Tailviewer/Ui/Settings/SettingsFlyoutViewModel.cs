@@ -265,6 +265,20 @@ namespace Tailviewer.Ui.Settings
 			}
 		}
 
+		public Theme Theme
+		{
+			get { return _settings.MainWindow.Theme; }
+			set
+			{
+				if (value == _settings.MainWindow.Theme)
+					return;
+
+				_settings.MainWindow.Theme = value;
+				EmitPropertyChanged();
+				_settings.SaveAsync();
+			}
+		}
+
 		public bool FolderDataSourceRecursive
 		{
 			get { return _settings.DataSources.FolderDataSourceRecursive; }

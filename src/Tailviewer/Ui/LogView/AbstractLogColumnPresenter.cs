@@ -17,6 +17,7 @@ namespace Tailviewer.Ui.LogView
 		public abstract IColumnDescriptor Column { get; }
 		public abstract TextSettings TextSettings { get; set; }
 		public abstract void FetchValues(ILogSource logSource, LogSourceSection visibleSection, double yOffset);
+		public abstract void UpdateTextBrushes(TextBrushes textBrushes);
 
 		#endregion
 	}
@@ -32,6 +33,7 @@ namespace Tailviewer.Ui.LogView
 
 		private double _yOffset;
 		private TextSettings _textSettings;
+		private TextBrushes _textBrushes;
 
 		protected AbstractLogColumnPresenter(IColumnDescriptor<T> column, TextSettings textSettings)
 		{
@@ -95,9 +97,16 @@ namespace Tailviewer.Ui.LogView
 		/// <returns></returns>
 		protected abstract AbstractLogEntryValueFormatter CreateFormatter(T value);
 
+		public override void UpdateTextBrushes(TextBrushes textBrushes)
+		{
+			_textBrushes = textBrushes;
+			InvalidateVisual();
+		}
+
 		protected override void OnRender(DrawingContext drawingContext)
 		{
-			drawingContext.DrawRectangle(Brushes.White, pen: null,
+			var backgroundBrush = _textBrushes?.CanvasBackgroundBrush ?? Brushes.White;
+			drawingContext.DrawRectangle(backgroundBrush, pen: null,
 			                             rectangle: new Rect(x: 0, y: 0, width: ActualWidth, height: ActualHeight));
 
 			var y = _yOffset;

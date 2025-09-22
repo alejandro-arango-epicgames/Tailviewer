@@ -45,6 +45,11 @@ namespace Tailviewer.Settings
 
 		string SelectedMainPanel { get; set; }
 
+		/// <summary>
+		///     The theme of the application (Light or Dark).
+		/// </summary>
+		Theme Theme { get; set; }
+
 		void Save(XmlWriter writer);
 		void Restore(XmlReader reader);
 		void UpdateFrom(Window window);

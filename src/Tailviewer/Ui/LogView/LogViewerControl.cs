@@ -95,6 +95,10 @@ namespace Tailviewer.Ui.LogView
 		                                                "Settings", typeof(ILogViewerSettings), typeof(LogViewerControl),
 		                                                new PropertyMetadata(null));
 
+		public static readonly DependencyProperty ThemeProperty = DependencyProperty.Register(
+		                                                "Theme", typeof(Theme), typeof(LogViewerControl),
+		                                                new PropertyMetadata(Theme.Light));
+
 		private static void OnMergedDataSourceDisplayModeChanged(DependencyObject d, DependencyPropertyChangedEventArgs args)
 		{
 			((LogViewerControl) d).OnMergedDataSourceDisplayModeChanged((DataSourceDisplayMode)args.NewValue);
@@ -242,6 +246,12 @@ namespace Tailviewer.Ui.LogView
 		{
 			get { return (ILogViewerSettings)GetValue(SettingsProperty); }
 			set { SetValue(SettingsProperty, value); }
+		}
+
+		public Theme Theme
+		{
+			get { return (Theme)GetValue(ThemeProperty); }
+			set { SetValue(ThemeProperty, value); }
 		}
 
 		public IEnumerable<LogLineIndex> SelectedIndices => PART_ListView.SelectedIndices;

@@ -32,6 +32,7 @@ namespace Tailviewer.Ui.LogView.DataSource
 		private TextSettings _textSettings;
 		private readonly List<FormattedText> _dataSourcesPerLogLine;
 		private readonly double _maximumWidth;
+		private Brush _backgroundBrush;
 
 		private IDataSource _dataSource;
 		private LogSourceSection _visibleSection;
@@ -42,9 +43,16 @@ namespace Tailviewer.Ui.LogView.DataSource
 			_textSettings = textSettings;
 			_dataSourcesPerLogLine = new List<FormattedText>();
 			_maximumWidth = textSettings.EstimateWidthUpperLimit(MaximumDataSourceCharacters);
+			_backgroundBrush = Brushes.Magenta; // Make it bright magenta to identify it
 
 			ClipToBounds = true;
 			SnapsToDevicePixels = true;
+		}
+
+		public void UpdateBackgroundBrush(Brush backgroundBrush)
+		{
+			_backgroundBrush = backgroundBrush;
+			InvalidateVisual();
 		}
 
 		public DataSourceDisplayMode DisplayMode
@@ -82,7 +90,7 @@ namespace Tailviewer.Ui.LogView.DataSource
 			var actualWidth = ActualWidth;
 			var actualHeight = ActualHeight;
 
-			drawingContext.DrawRectangle(Brushes.White, pen: null,
+			drawingContext.DrawRectangle(_backgroundBrush ?? Brushes.Black, pen: null,
 				rectangle: new Rect(x: 0, y: 0, width: actualWidth, height: actualHeight));
 
 			var y = _yOffset;

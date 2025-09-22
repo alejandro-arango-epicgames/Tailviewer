@@ -19,44 +19,44 @@ namespace Tailviewer.Settings
 
 		public static LogLevelSettings DefaultOther => new LogLevelSettings
 		{
-			ForegroundColor = Colors.Black,
-			BackgroundColor = Colors.Transparent
+			ForegroundColor = Colors.White,
+			BackgroundColor = Color.FromRgb(30, 30, 30) // Very dark grey
 		};
 
 		public static LogLevelSettings DefaultTrace => new LogLevelSettings
 		{
-			ForegroundColor = Color.FromRgb(128, 128, 128),
-			BackgroundColor = Colors.Transparent
+			ForegroundColor = Colors.White,
+			BackgroundColor = Color.FromRgb(30, 30, 30) // Very dark grey
 		};
 
 		public static LogLevelSettings DefaultDebug => new LogLevelSettings
 		{
-			ForegroundColor = Color.FromRgb(128, 128, 128),
-			BackgroundColor = Colors.Transparent
+			ForegroundColor = Colors.White,
+			BackgroundColor = Color.FromRgb(30, 30, 30) // Very dark grey
 		};
 
 		public static LogLevelSettings DefaultInfo => new LogLevelSettings
 		{
-			ForegroundColor = Colors.Black,
-			BackgroundColor = Colors.Transparent
+			ForegroundColor = Colors.White,
+			BackgroundColor = Color.FromRgb(30, 30, 30) // Very dark grey
 		};
 
 		public static LogLevelSettings DefaultWarning => new LogLevelSettings
 		{
-			ForegroundColor = Colors.White,
-			BackgroundColor = Color.FromRgb(255, 195, 0)
+			ForegroundColor = Color.FromRgb(255, 165, 0), // Orange text like Unreal
+			BackgroundColor = Color.FromRgb(30, 30, 30) // Very dark grey
 		};
 
 		public static LogLevelSettings DefaultError => new LogLevelSettings
 		{
-			ForegroundColor = Colors.White,
-			BackgroundColor = Color.FromRgb(232, 17, 35)
+			ForegroundColor = Color.FromRgb(220, 20, 60), // Crimson red text like Unreal
+			BackgroundColor = Color.FromRgb(30, 30, 30) // Very dark grey
 		};
 
 		public static LogLevelSettings DefaultFatal => new LogLevelSettings
 		{
-			ForegroundColor = Colors.White,
-			BackgroundColor = Color.FromRgb(232, 17, 35)
+			ForegroundColor = Color.FromRgb(178, 34, 34), // Dark red text for fatal
+			BackgroundColor = Color.FromRgb(30, 30, 30) // Very dark grey
 		};
 
 		private static readonly ILog Log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);

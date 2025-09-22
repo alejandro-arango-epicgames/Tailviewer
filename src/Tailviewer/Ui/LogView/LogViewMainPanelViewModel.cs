@@ -439,6 +439,8 @@ namespace Tailviewer.Ui.LogView
 
 		public ILogViewerSettings Settings => _applicationSettings.LogViewer;
 
+		public Theme Theme => _applicationSettings.MainWindow.Theme;
+
 		public ICommand AddBookmarkCommand => _bookmarks.AddBookmarkCommand;
 
 		public ICommand RemoveAllBookmarkCommand => _bookmarks.RemoveAllBookmarksCommand;

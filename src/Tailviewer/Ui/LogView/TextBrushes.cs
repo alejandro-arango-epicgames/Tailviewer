@@ -24,6 +24,8 @@ namespace Tailviewer.Ui.LogView
 		private readonly Dictionary<LevelFlags, Brush> _backgroundBrushes;
 		private readonly Dictionary<LevelFlags, Brush> _alternateBackgroundBrushes;
 
+		public readonly Brush CanvasBackgroundBrush;
+
 		static TextBrushes()
 		{
 			SelectedBackgroundBrush = CreateBrush(Color.FromRgb(57, 152, 214));
@@ -44,11 +46,19 @@ namespace Tailviewer.Ui.LogView
 			DataSourceCharacterCodeForegroundBrush = CreateBrush(Color.FromRgb(43, 145, 175));
 		}
 
-		public TextBrushes(ILogViewerSettings settings)
+		public TextBrushes(ILogViewerSettings settings) : this(settings, Theme.Light)
+		{
+		}
+
+		public TextBrushes(ILogViewerSettings settings, Theme theme)
 		{
 			_foregroundBrushes = new Dictionary<LevelFlags, Brush>();
 			_backgroundBrushes = new Dictionary<LevelFlags, Brush>();
 			_alternateBackgroundBrushes = new Dictionary<LevelFlags, Brush>();
+
+			// Set canvas background based on theme
+			CanvasBackgroundBrush = theme == Theme.Dark ? Brushes.Black : Brushes.White;
+
 			if (settings != null)
 			{
 				_foregroundBrushes.Add(LevelFlags.Other, CreateBrush(settings.Other.ForegroundColor));
@@ -83,9 +93,9 @@ namespace Tailviewer.Ui.LogView
 			{
 				foreach (LevelFlags level in Enum.GetValues(typeof(LevelFlags)))
 				{
-					_foregroundBrushes.Add(level, Brushes.Black);
-					_backgroundBrushes.Add(level, Brushes.White);
-					_alternateBackgroundBrushes.Add(level, Brushes.White);
+					_foregroundBrushes.Add(level, theme == Theme.Dark ? Brushes.White : Brushes.Black);
+					_backgroundBrushes.Add(level, theme == Theme.Dark ? Brushes.Black : Brushes.White);
+					_alternateBackgroundBrushes.Add(level, theme == Theme.Dark ? Brushes.Black : Brushes.White);
 				}
 			}
 		}

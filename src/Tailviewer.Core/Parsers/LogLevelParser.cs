@@ -24,7 +24,7 @@ namespace Tailviewer.Core
 		}
 
 		/// <summary>
-		///     Parses the given line and extracts log4net levels from it,
+		///     Parses the given line and extracts Unreal Engine log levels from it,
 		///     if there are any.
 		/// </summary>
 		/// <param name="line"></param>
@@ -42,10 +42,16 @@ namespace Tailviewer.Core
 				return LevelFlags.Other;
 			}
 
-			var comparison = StringComparison.InvariantCulture;
-			var idx = line.IndexOf("FATAL", comparison);
+			var comparison = StringComparison.InvariantCultureIgnoreCase; // Unreal logs can have different cases
+
+			// Unreal Engine log format: "LogCategory: Level: Message"
+			// Look for the specific pattern ": Level:" to ensure we're matching the actual log level
+
+			// Fatal level
+			var idx = line.IndexOf(": Fatal:", comparison);
 			if (idx != -1)
 			{
+				rightMost |= LevelFlags.Fatal;
 				if (idx < index)
 				{
 					leftMost = LevelFlags.Fatal;
@@ -53,7 +59,8 @@ namespace Tailviewer.Core
 				}
 			}
 
-			idx = line.IndexOf("ERROR", comparison);
+			// Error level
+			idx = line.IndexOf(": Error:", comparison);
 			if (idx != -1)
 			{
 				rightMost |= LevelFlags.Error;
@@ -64,7 +71,8 @@ namespace Tailviewer.Core
 				}
 			}
 
-			idx = line.IndexOf("WARN", comparison);
+			// Warning level
+			idx = line.IndexOf(": Warning:", comparison);
 			if (idx != -1)
 			{
 				rightMost |= LevelFlags.Warning;
@@ -75,7 +83,8 @@ namespace Tailviewer.Core
 				}
 			}
 
-			idx = line.IndexOf("INFO", comparison);
+			// Info level equivalents: Display and Log
+			idx = line.IndexOf(": Display:", comparison);
 			if (idx != -1)
 			{
 				rightMost |= LevelFlags.Info;
@@ -86,7 +95,19 @@ namespace Tailviewer.Core
 				}
 			}
 
-			idx = line.IndexOf("DEBUG", comparison);
+			idx = line.IndexOf(": Log:", comparison);
+			if (idx != -1)
+			{
+				rightMost |= LevelFlags.Info;
+				if (idx < index)
+				{
+					leftMost = LevelFlags.Info;
+					index = idx;
+				}
+			}
+
+			// Debug level equivalents: Verbose and VeryVerbose
+			idx = line.IndexOf(": VeryVerbose:", comparison); // Check VeryVerbose first (longer string)
 			if (idx != -1)
 			{
 				rightMost |= LevelFlags.Debug;
@@ -96,8 +117,22 @@ namespace Tailviewer.Core
 					index = idx;
 				}
 			}
+			else
+			{
+				idx = line.IndexOf(": Verbose:", comparison);
+				if (idx != -1)
+				{
+					rightMost |= LevelFlags.Debug;
+					if (idx < index)
+					{
+						leftMost = LevelFlags.Debug;
+						index = idx;
+					}
+				}
+			}
 
-			idx = line.IndexOf("TRACE", comparison);
+			// Trace level - keep as fallback for very detailed logs
+			idx = line.IndexOf(": Trace:", comparison);
 			if (idx != -1)
 			{
 				rightMost |= LevelFlags.Trace;

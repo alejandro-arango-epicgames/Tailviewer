@@ -19,5 +19,11 @@ namespace Tailviewer.Ui.LogView
 		/// <param name="visibleSection"></param>
 		/// <param name="yOffset"></param>
 		void FetchValues(ILogSource logSource, LogSourceSection visibleSection, double yOffset);
+
+		/// <summary>
+		///     Updates the text brushes used for rendering.
+		/// </summary>
+		/// <param name="textBrushes"></param>
+		void UpdateTextBrushes(TextBrushes textBrushes);
 	}
 }

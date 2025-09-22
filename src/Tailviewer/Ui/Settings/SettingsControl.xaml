@@ -7,6 +7,7 @@
              xmlns:tailviewer="clr-namespace:Tailviewer"
              xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
              xmlns:settings="clr-namespace:Tailviewer.Ui.Settings"
+             xmlns:settingsNs="clr-namespace:Tailviewer.Settings"
              mc:Ignorable="d"
              d:DesignHeight="600" d:DesignWidth="800"
              d:DataContext="{d:DesignInstance settings:SettingsFlyoutViewModel}"
@@ -302,10 +303,29 @@
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <controls:FlatGroupBox Header="Data Sources" VerticalAlignment="Top" Margin="8"
+                <controls:FlatGroupBox Header="Appearance" VerticalAlignment="Top" Margin="8"
+                                       HeaderTemplate="{StaticResource HeaderDataTemplate}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="170" />
+                            <ColumnDefinition />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Theme" Margin="0,6,6,6" VerticalAlignment="Center"/>
+                        <ComboBox Grid.Column="1" SelectedItem="{Binding Theme, Mode=TwoWay}"
+                                  Margin="0,6,6,6">
+                            <ComboBox.Items>
+                                <x:Static Member="settingsNs:Theme.Light" />
+                                <x:Static Member="settingsNs:Theme.Dark" />
+                            </ComboBox.Items>
+                        </ComboBox>
+                    </Grid>
+                </controls:FlatGroupBox>
+
+                <controls:FlatGroupBox Grid.Row="1" Header="Data Sources" VerticalAlignment="Top" Margin="8"
                                        HeaderTemplate="{StaticResource HeaderDataTemplate}">
                     <Grid>
                         <Grid.RowDefinitions>
@@ -376,12 +396,12 @@
 
                 <controls:FlatGroupBox Header="Custom Log file Formats"
                                        HeaderTemplate="{StaticResource HeaderDataTemplate}"
-                                       Grid.Row="1"
+                                       Grid.Row="2"
                                        VerticalAlignment="Top" Margin="8">
                     <ContentPresenter Content="{Binding CustomFormats}" />
                 </controls:FlatGroupBox>
 
-                <controls:FlatGroupBox Grid.Row="2"
+                <controls:FlatGroupBox Grid.Row="3"
                                        Header="Window" VerticalAlignment="Top" Margin="8"
                                        HeaderTemplate="{StaticResource HeaderDataTemplate}">
                     <Grid>
@@ -390,7 +410,7 @@
                 </controls:FlatGroupBox>
 
                 <controls:FlatGroupBox Header="Updates" VerticalAlignment="Top" Margin="8"
-                                       Grid.Row="3">
+                                       Grid.Row="4">
                     <controls:FlatGroupBox.HeaderTemplate>
                         <DataTemplate>
                             <TextBlock FontSize="22" Text="{Binding}" />

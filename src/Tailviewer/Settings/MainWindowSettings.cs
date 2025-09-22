@@ -61,10 +61,13 @@ namespace Tailviewer.Settings
 
 		public string SelectedMainPanel { get; set; }
 
+		public Theme Theme { get; set; }
+
 		public MainWindowSettings()
 		{
 			_window = new WindowSettings();
 			IsLeftSidePanelVisible = true;
+			Theme = Theme.Dark; // Default to dark theme
 		}
 
 		private MainWindowSettings(MainWindowSettings other)
@@ -74,6 +77,7 @@ namespace Tailviewer.Settings
 			SelectedSidePanel = other.SelectedSidePanel;
 			AlwaysOnTop = other.AlwaysOnTop;
 			IsLeftSidePanelVisible = other.IsLeftSidePanelVisible;
+			Theme = other.Theme;
 		}
 
 		private WindowSettings _window;
@@ -90,6 +94,7 @@ namespace Tailviewer.Settings
 			writer.WriteAttributeBool("alwaysontop", AlwaysOnTop);
 			writer.WriteAttributeBool("isleftsidepanelvisible", IsLeftSidePanelVisible);
 			writer.WriteAttributeEnum("previouswindowstate", _previousWindowState);
+			writer.WriteAttributeEnum("theme", Theme);
 			_window.Save(writer);
 		}
 
@@ -118,6 +123,10 @@ namespace Tailviewer.Settings
 
 					case "previouswindowstate":
 						_previousWindowState = reader.ReadContentAsEnum<WindowState>();
+						break;
+
+					case "theme":
+						Theme = reader.ReadContentAsEnum<Theme>();
 						break;
 				}
 			}

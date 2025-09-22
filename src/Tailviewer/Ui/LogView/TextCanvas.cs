@@ -282,7 +282,8 @@ namespace Tailviewer.Ui.LogView
 			base.OnRender(drawingContext);
 
 			var rect = new Rect(0, 0, ActualWidth, ActualHeight);
-			drawingContext.DrawRectangle(Brushes.White, null, rect);
+			var backgroundBrush = _textBrushes?.CanvasBackgroundBrush ?? Brushes.White;
+			drawingContext.DrawRectangle(backgroundBrush, null, rect);
 
 			double x = _xOffset;
 			double y = _yOffset;

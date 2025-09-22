@@ -81,6 +81,9 @@ namespace Tailviewer.Ui.LogView
 		public static readonly DependencyProperty SettingsProperty = DependencyProperty.Register(
 		                                                "Settings", typeof(ILogViewerSettings), typeof(LogEntryListView), new PropertyMetadata(null, OnSettingsChanged));
 
+		public static readonly DependencyProperty ThemeProperty = DependencyProperty.Register(
+		                                                "Theme", typeof(Theme), typeof(LogEntryListView), new PropertyMetadata(Theme.Light, OnThemeChanged));
+
 		public static readonly TimeSpan MaximumRefreshInterval = TimeSpan.FromMilliseconds(value: 33);
 
 		private readonly IReadOnlyDictionary<IColumnDescriptor, Func<TextSettings, AbstractLogColumnPresenter>>
@@ -100,6 +103,7 @@ namespace Tailviewer.Ui.LogView
 		private readonly OriginalLineNumberColumnPresenter _lineNumberColumn;
 		private readonly DispatcherTimer _timer;
 		private readonly FlatScrollBar _verticalScrollBar;
+		private readonly Rectangle _separator;
 
 		private int _maxLineWidth;
 		private int _pendingModificationsCount;
@@ -189,21 +193,21 @@ namespace Tailviewer.Ui.LogView
 
 			ChangeTextSettings(textSettings, textBrushes);
 
-			var separator = new Rectangle
+			_separator = new Rectangle
 			{
-				Fill = new SolidColorBrush(Color.FromRgb(225, 228, 232)),
+				Fill = new SolidColorBrush(Color.FromRgb(45, 45, 45)), // Dark separator for dark theme
 				Width = 2
 			};
-			separator.SetValue(RowProperty, value: 0);
-			separator.SetValue(ColumnProperty, value: messageColumnIndex);
-			separator.SetValue(MarginProperty, new Thickness(left: 0, top: 0, right: 5, bottom: 0));
+			_separator.SetValue(RowProperty, value: 0);
+			_separator.SetValue(ColumnProperty, value: messageColumnIndex);
+			_separator.SetValue(MarginProperty, new Thickness(left: 0, top: 0, right: 5, bottom: 0));
 			ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(value: 1, type: GridUnitType.Auto) });
 
 			Children.Add(_lineNumberColumn);
 			Children.Add(_dataSourceCanvas);
 			Children.Add(_deltaTimesColumn);
 			Children.Add(_elapsedTimeColumn);
-			Children.Add(separator);
+			Children.Add(_separator);
 			Children.Add(PartTextCanvas);
 			Children.Add(_verticalScrollBar);
 			Children.Add(_horizontalScrollBar);
@@ -305,6 +309,12 @@ namespace Tailviewer.Ui.LogView
 			set { SetValue(SettingsProperty, value); }
 		}
 
+		public Theme Theme
+		{
+			get { return (Theme)GetValue(ThemeProperty); }
+			set { SetValue(ThemeProperty, value); }
+		}
+
 		public void OnLogFileModified(ILogSource logSource, LogSourceModification modification)
 		{
 			var width = _textSettings.EstimateWidthUpperLimit(logSource.GetProperty(TextProperties.MaxCharactersInLine));
@@ -320,6 +330,10 @@ namespace Tailviewer.Ui.LogView
 		private void OnLoaded(object sender, RoutedEventArgs routedEventArgs)
 		{
 			_timer.Start();
+			// Update separator color once control is loaded and theme binding is established
+			UpdateSeparatorColor();
+			// Update data source canvas background
+			UpdateDataSourceBackground();
 		}
 
 		private void OnUnloaded(object sender, RoutedEventArgs routedEventArgs)
@@ -641,13 +655,57 @@ namespace Tailviewer.Ui.LogView
 			((LogEntryListView) d).OnSettingsChanged((ILogViewerSettings)e.NewValue);
 		}
 
+		private static void OnThemeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+		{
+			((LogEntryListView) d).OnThemeChanged((Theme)e.NewValue);
+		}
+
 		private void OnSettingsChanged(ILogViewerSettings settings)
 		{
 			var textSettings = settings != null
 				? new TextSettings(settings.FontSize, settings.TabWidth)
 				: TextSettings.Default;
-			var textBrushes = new TextBrushes(settings);
+			var textBrushes = new TextBrushes(settings, Theme);
 			ChangeTextSettings(textSettings, textBrushes);
+
+			// Update separator color when settings change
+			UpdateSeparatorColor();
+			// Update data source canvas background
+			UpdateDataSourceBackground();
+		}
+
+		private void OnThemeChanged(Theme theme)
+		{
+			// When theme changes, recreate text brushes with new theme
+			var textSettings = Settings != null
+				? new TextSettings(Settings.FontSize, Settings.TabWidth)
+				: TextSettings.Default;
+			var textBrushes = new TextBrushes(Settings, theme);
+			ChangeTextSettings(textSettings, textBrushes);
+
+			// Update separator color based on theme
+			UpdateSeparatorColor();
+			// Update data source canvas background
+			UpdateDataSourceBackground();
+		}
+
+		private void UpdateSeparatorColor()
+		{
+			if (_separator != null)
+			{
+				var color = Theme == Theme.Dark ? Color.FromRgb(45, 45, 45) : Color.FromRgb(225, 228, 232);
+				_separator.Fill = new SolidColorBrush(color);
+			}
+		}
+
+		private void UpdateDataSourceBackground()
+		{
+			if (_dataSourceCanvas != null)
+			{
+				// For debugging - use obvious colors
+				var backgroundBrush = Theme == Theme.Dark ? Brushes.Blue : Brushes.Yellow;
+				_dataSourceCanvas.UpdateBackgroundBrush(backgroundBrush);
+			}
 		}
 
 		private void ChangeTextSettings(TextSettings textSettings, TextBrushes textBrushes)
@@ -664,6 +722,7 @@ namespace Tailviewer.Ui.LogView
 			foreach (var columnPresenter in _columnPresenters.Values)
 			{
 				columnPresenter.TextSettings = _textSettings;
+				columnPresenter.UpdateTextBrushes(_textBrushes);
 			}
 			PartTextCanvas.ChangeTextSettings(_textSettings, _textBrushes);
 

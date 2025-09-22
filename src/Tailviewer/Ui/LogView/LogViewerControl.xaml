@@ -9,7 +9,7 @@
              xmlns:sidePanel="clr-namespace:Tailviewer.Ui.SidePanel"
              xmlns:metrolib="clr-namespace:Metrolib;assembly=Metrolib"
              x:Name="This"
-             Background="White">
+             Background="{Binding Theme, ElementName=This, Converter={x:Static converters:ThemeToBackgroundConverter.Instance}}">
 
     <UserControl.Resources>
         <ResourceDictionary>
@@ -234,6 +234,7 @@
                     CurrentLine="{Binding CurrentLogLine, Mode=TwoWay, ElementName=This}"
                     MergedDataSourceDisplayMode="{Binding MergedDataSourceDisplayMode, Mode=TwoWay, ElementName=This}"
                     Settings="{Binding Settings, ElementName=This}"
+                    Theme="{Binding Theme, ElementName=This}"
                     SnapsToDevicePixels="True" />
 
                 <!-- Error message when main Data Source View is empty -->
@@ -302,6 +303,7 @@
                         SelectedIndices="{Binding DataSource.FindAll.SelectedLogLines, ElementName=This, Mode=TwoWay}"
                         MergedDataSourceDisplayMode="{Binding MergedDataSourceDisplayMode, Mode=TwoWay, ElementName=This}"
                         Settings="{Binding Settings, ElementName=This}"
+                        Theme="{Binding Theme, ElementName=This}"
                         SnapsToDevicePixels="True" />
                 </Grid>
             </Grid>
