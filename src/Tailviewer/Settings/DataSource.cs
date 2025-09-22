@@ -106,6 +106,7 @@ namespace Tailviewer.Settings
 			ColorByLevel = true;
 			ShowLineNumbers = true;
 			IsExpanded = true;
+			FollowTail = true;
 			SelectedLogLines = new HashSet<LogLineIndex>();
 			VisibleLogLine = LogLineIndex.Invalid;
 			ExcludedDataSources = new HashSet<DataSourceId>();
