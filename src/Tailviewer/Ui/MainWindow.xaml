@@ -135,6 +135,8 @@
                        Foreground="{StaticResource PrimaryForegroundBrush}"
                        Text="{Binding WindowTitleSuffix}" />
 
+            <!-- ActionCenter Button - Commented out to remove from UI -->
+            <!--
             <metrolib:EmailToggleButton Grid.Column="5"
                                         VerticalContentAlignment="Top"
                                         HorizontalContentAlignment="Right"
@@ -164,6 +166,7 @@
                     <TextBlock Text="{Binding ActionCenter.UnreadCount}" FontSize="8" />
                 </metrolib:NotificationBadge>
             </metrolib:EmailToggleButton>
+            -->
         </Grid>
     </metrolib:ChromelessWindow.Header>
 

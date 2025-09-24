@@ -124,10 +124,16 @@ namespace Tailviewer.Ui.LogView
 			RowDefinitions.Add(new RowDefinition { Height = new GridLength(value: 1, type: GridUnitType.Star) });
 			RowDefinitions.Add(new RowDefinition { Height = new GridLength(value: 1, type: GridUnitType.Auto) });
 
+			// Initialize scrollbars with very light colors for testing
+			var defaultTrackBrush = new SolidColorBrush(Color.FromRgb(80, 80, 80));
+			var defaultThumbBrush = new SolidColorBrush(Color.FromRgb(200, 200, 200)); // Almost white for testing
+
 			_verticalScrollBar = new FlatScrollBar
 			{
 				Name = "PART_VerticalScrollBar",
-				Thickness = 18
+				Thickness = 18,
+				Background = defaultTrackBrush,
+				Foreground = defaultThumbBrush
 			};
 			_verticalScrollBar.ValueChanged += VerticalScrollBarOnValueChanged;
 			_verticalScrollBar.Scroll += VerticalScrollBarOnScroll;
@@ -138,7 +144,9 @@ namespace Tailviewer.Ui.LogView
 			{
 				Name = "PART_HorizontalScrollBar",
 				Orientation = Orientation.Horizontal,
-				Thickness = 18
+				Thickness = 18,
+				Background = defaultTrackBrush,
+				Foreground = defaultThumbBrush
 			};
 			_horizontalScrollBar.SetValue(RowProperty, value: 1);
 			_horizontalScrollBar.SetValue(ColumnProperty, value: 0);
@@ -334,6 +342,8 @@ namespace Tailviewer.Ui.LogView
 			UpdateSeparatorColor();
 			// Update data source canvas background
 			UpdateDataSourceBackground();
+			// Update scrollbar theme when control loads
+			UpdateScrollBarTheme();
 		}
 
 		private void OnUnloaded(object sender, RoutedEventArgs routedEventArgs)
@@ -672,6 +682,8 @@ namespace Tailviewer.Ui.LogView
 			UpdateSeparatorColor();
 			// Update data source canvas background
 			UpdateDataSourceBackground();
+			// Update scrollbar colors based on theme
+			UpdateScrollBarTheme();
 		}
 
 		private void OnThemeChanged(Theme theme)
@@ -687,6 +699,8 @@ namespace Tailviewer.Ui.LogView
 			UpdateSeparatorColor();
 			// Update data source canvas background
 			UpdateDataSourceBackground();
+			// Update scrollbar colors based on theme
+			UpdateScrollBarTheme();
 		}
 
 		private void UpdateSeparatorColor()
@@ -705,6 +719,71 @@ namespace Tailviewer.Ui.LogView
 				// For debugging - use obvious colors
 				var backgroundBrush = Theme == Theme.Dark ? Brushes.Blue : Brushes.Yellow;
 				_dataSourceCanvas.UpdateBackgroundBrush(backgroundBrush);
+			}
+		}
+
+		private void UpdateScrollBarTheme()
+		{
+			// FlatScrollBar from Metrolib needs direct property setting
+			if (Theme == Theme.Dark)
+			{
+				// Dark theme colors with extreme contrast for testing
+				var trackBrush = new SolidColorBrush(Color.FromRgb(80, 80, 80)); // Lighter gray track
+				var thumbBrush = new SolidColorBrush(Color.FromRgb(200, 200, 200)); // Very light gray thumb
+
+				if (_verticalScrollBar != null)
+				{
+					_verticalScrollBar.Background = trackBrush;
+					_verticalScrollBar.Foreground = thumbBrush;
+					// Try setting the style if it exists
+					if (Application.Current?.Resources.Contains("ThemedScrollBar") == true)
+					{
+						_verticalScrollBar.Style = Application.Current.Resources["ThemedScrollBar"] as Style;
+					}
+				}
+				if (_horizontalScrollBar != null)
+				{
+					_horizontalScrollBar.Background = trackBrush;
+					_horizontalScrollBar.Foreground = thumbBrush;
+					// Try setting the style if it exists
+					if (Application.Current?.Resources.Contains("ThemedScrollBar") == true)
+					{
+						_horizontalScrollBar.Style = Application.Current.Resources["ThemedScrollBar"] as Style;
+					}
+				}
+
+				// Also update global resources for any other scrollbars
+				if (Application.Current?.Resources != null)
+				{
+					Application.Current.Resources["ScrollBarTrackBrush"] = trackBrush;
+					Application.Current.Resources["ScrollBarThumbBrush"] = thumbBrush;
+					Application.Current.Resources["ScrollBarThumbHoverBrush"] = new SolidColorBrush(Color.FromRgb(140, 140, 140));
+				}
+			}
+			else
+			{
+				// Light theme colors
+				var trackBrush = new SolidColorBrush(Color.FromRgb(241, 241, 241)); // #F1F1F1
+				var thumbBrush = new SolidColorBrush(Color.FromRgb(193, 193, 193)); // #C1C1C1
+
+				if (_verticalScrollBar != null)
+				{
+					_verticalScrollBar.Background = trackBrush;
+					_verticalScrollBar.Foreground = thumbBrush;
+				}
+				if (_horizontalScrollBar != null)
+				{
+					_horizontalScrollBar.Background = trackBrush;
+					_horizontalScrollBar.Foreground = thumbBrush;
+				}
+
+				// Also update global resources
+				if (Application.Current?.Resources != null)
+				{
+					Application.Current.Resources["ScrollBarTrackBrush"] = trackBrush;
+					Application.Current.Resources["ScrollBarThumbBrush"] = thumbBrush;
+					Application.Current.Resources["ScrollBarThumbHoverBrush"] = new SolidColorBrush(Color.FromRgb(168, 168, 168));
+				}
 			}
 		}
 
